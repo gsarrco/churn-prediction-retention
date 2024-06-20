@@ -14,5 +14,6 @@ Since it involved the use of sensitive customer and business data, we were unfor
 - The original data files are not present in the github repository
 - The references to specific museums or locations are deleted
 - Information about customers, such as age, geographical distribution and so on are deleted
+- We are still working on releasing `data.R`, where we cleaned and preprocessed the data
 
 However, the core of the project, consisting of the churn prediction and retention analysis' chapter, is published in its entirety.
