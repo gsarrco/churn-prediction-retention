@@ -1,0 +1,53 @@
+```{r, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# this set the chunk options for the entire markdown
+knitr::opts_chunk$set(
+  include = FALSE,
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = 'center',
+  out.width = '70%',
+  fig.pos = 'H'
+)
+```
+
+```{r}
+source("data.R")
+theme_set(
+  theme_light()
+)
+```
+
+# Data preparation
+
+## About the data
+
+In this preliminary section, the data that will be used to conduct the analysis aimed at predicting the likelihood of churn of museum subscriptions are described.
+
+Our data consists in three different datasets, each concerning specific aspects of the customers. 
+The first dataset provides personal and subscription information about customers. It contains around 100,000 observations and 14 variables covering details of the purchase transactions, payment methods, types of discounts, as well as demographic and geographic information.
+
+With a total of around 80,000 observations and 16 variables, the second dataset provides a comprehensive view of card renewal dynamics. It includes both variables that provide personal details about customers and variables related to subscription renewals, such as the date when the subscription stared.
+The last dataset focuses on the individual visits to the museums. Featuring around 500,000 observations and 7 variables, it provides a detailed view of customer visits to museums, including information such as dates, times, ticket prices, and locations.
+
+## Data cleaning and processing
+
+It is essential to conduct rigorous data cleaning and preparation operations in order to guarantee the integrity and dependability of the datasets for further data analysis and prediction model construction. This critical phase lays the foundation for the accuracy of our insights and predictions.
+
+The initial step involves the merge of the first two datasets using the customer ID as the common identifier. During this merging process approximately 8,000 observations was lost due to the unavailability of matching customer IDs.
+
+The focus then shifts to identifying and dealing with missing and NA (Not Available) values within the datasets. There are certain entries in the dataset marked as "DATO MANCANTE," "XXXXX," "ESTER," "BIANC," and "CORSO," all of which are taken into account and automatically converted into NA values. Additionally, the age variable had some missing entries, which led to a problem that was resolved by calculating all ages using the customer's birth-date and the reference year of 2014.
+All date-related data fields are uniformly translated into a common date format to improve data consistency and usability. As most of our customers reside in the association area and its surrounding, we created an additional categorical variable to indicate if the customer lives in the municipality of the association, in the region of the association but outside of the municipality, or outside the region. This was done to provide more specific geographical context.
+
+Looking at customers' time visits, it turned out that there are inconsistencies in the values. An entrance time of "00:00," which is found in over 10,000 observations, is thought to be improbable and is treated as NA. Additionally, occurrences when people entered the museum at or almost at the same time, frequently with the same customer ID, have been considered false.
+The variable "cap," which was initially numerical, also has a problem because the leading zeros were unintentionally left out. The variable is changed into a factor variable to ensure that all numerical values are included, correcting the situation and maintaining the accuracy and completeness of the data.
+
+In Table \@ref(tab:variables), the variables that are more significant to our analysis are reported and will be later described.
+
+```{r, variables, include=TRUE}
+df_12 %>% 
+  select(importo, sesso, nabb0512, cambiocap0512, province, eta13, days_last_entrance, nvisit13) %>% 
+  tbl_summary(, missing = "ifany") %>%
+  modify_caption("Interesting variables")
+```
+\newpage

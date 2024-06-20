@@ -1,0 +1,26 @@
+---
+title: " Churn prediction and retention analysis for a museum subscription in Italy"
+author:
+  - '[Gabriele Bidoia](https://github.com/gbrlbd)'
+  - '[Beatrice Fabris](https://github.com/beatricefabris)'
+  - '[Giada Pezzo](https://github.com/giadapezzo)'
+  - '[Giacomo Sarrocco](https://github.com/gsarrco)'
+header-includes:
+  \usepackage{setspace}
+  \usepackage{float}
+  \usepackage{booktabs}
+  \usepackage{colortbl}
+  \onehalfspacing
+delete_merged_file: true
+---
+
+# Preliminary remarks {-}
+
+The following work is the result of a university project during in our Master's Degree. Unfortunately, this project involves the use of sensible customer and business data that we are not allowed to share. Therefore, we had to remove parts from the published report. In particular:
+
+- The original data files are not present in the github repository,
+- The references to specific museums or locations are deleted,
+- Information about customers, such as age, geographical distribution and so on are deleted.
+
+The part of the work with the analysis and prediction of the customers more likely to churn, which is the core of the project, is published completely.
+\newpage

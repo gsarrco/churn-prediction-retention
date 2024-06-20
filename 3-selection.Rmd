@@ -1,0 +1,104 @@
+# Variable selection
+
+Customers are very important to companies as a key to success. Our marketing focuses on projecting the 2014 churn rate because it is more expensive for businesses to gain new clients than it is to invest in retaining current ones.
+
+The churn rate is the fraction of customers that don't renew their museum cards.
+Our objective is to identify the clients who are unlikely to extend their museum membership, and in order to do this it's critical to comprehend which of these clients' attributes merit careful consideration. In addition, to make predictions, we need to know which additional variables are crucial.
+
+In this chapter we will analyze the variables that have a certain impact on the churn probability of our subscribers, through the use of the logistic model.
+
+First of all, it is necessary to analyze which variables are important to the churn prediction. Our research studies is composed of two parts: some descriptive analysis in order to understand the magnitude of some variables to the churn one, and the choice of these variables based on multicollinearity and significance for the logistic model.
+
+## Selecting variables based on summary statistics
+
+The dataset has different variables, and as first step, it is necessary to understand which ones have an higher impact to the probability of churn through the summary statistic. In order to do this, we have created a summary table for some selected variables. The choice of these variables is based on the descriptive analysis of the dataset displayed in the previous chapters, and also on the multicollinearity problem; for example, the variables _number of visits_ and _number of visits before_, which is the number of visits before 2013, are highly correlated, so we have decided to select only one of them. Moreover, we have excluded some categorical variable with a lot of classes, like _municipality_ and _province_, which have municipalities and provinces from all of Italy. As a way to solve this problem, we have created a new categorical variable that contains all these classes without having any computational and timing issue for the logistic regression: _location_. It has three classes: _out of region_, which refers to individuals who live outside the region; _region_ are individuals who live in the region, but not in the municipality, which has a specific class; and _city_ for people who leave in the municipality.
+
+The Table \@ref(tab:summary-table) shows the amount of individuals that churned and those who renewed their subscription, the sample size and the p-value of each variable. Categorical variables' values are the number of observation related to each class; meanwhile, in the round brackets, we have the percentage of the specif class related to the "churn" variable. On the other hand, the values of continuous variables are the mean and their standard deviation.
+
+```{r include = TRUE, summary-table}
+df_12 %>% mutate(if_else(churn == 0, 'Renewed', 'Churned')) %>%
+tbl_summary(
+  include = c(sesso, eta13, importo, nvisit13, reg, days_last_entrance, nuovo_abb),
+  by = churn, # split table by group
+  missing = "ifany", # don't list missing data separately
+  perc = 'row',
+  statistic = list(
+    all_continuous()  ~ "{mean} ({sd})",
+    all_categorical()  ~ "{n} ({p}%)",
+    sesso = "{n} ({p}%)"
+  )
+) %>%
+add_n() %>% # add column with total number of non-missing observations
+add_p() %>% # test for a difference between groups
+modify_caption( "Summary table") %>% as_kable_extra()  %>% kable_styling(latex_options = "hold_position")
+```
+
+
+The first variable that we have analyzed is _age_, which is the age of the subscribers in 2013. The mean of the age of churned individuals is 45 years old, meanwhile the renewed ones are 55 years old. This means that the churned individuals are older than the renewed ones.
+
+_visits_ is the number of visits that an individual has done during 2013. As displayed in Table \@ref(tab:summary-table), the mean of the number of visits of churned individuals is lower than the renewed ones, with an average number of 5 visits per customers rather than 8 for those who renewed the subscription. This means that the churned individuals have a lower frequency of visits than the renewed ones.
+
+There are some variables that are completely unbalanced, like _new subscription_, which is related to those without a museum card in 2012, that are new customers in 2013; otherwise _subscription_ are old customers. The Table \@ref(tab:summary-table) shows that there are only a few individuals which were not new customers in 2013. For this reason we cannot consider that, as described in the Table \@ref(tab:summary-table), 24% of the old subscribers have churned, as they are only 8 individuals out of 71.677 individuals. On the other hand, most new subscribers have renewed their subscriptions.
+
+The last variable to point out is _location_, the one we have create in order to include all the geographical locations.
+According to the Table \@ref(tab:summary-table), most of individuals tend to renew their subscription all over the country, considering that we have only three main classes for this variable. Moreover, these classes are unbalanced since the major of individuals are concentrated in the association's region. People living in the municipality are the most numerous in the categorical variable, but with a churn rate of 30%. Given the unbalanced nature of the sample, the frequency of churn is higher in other regions. But as seen in the descriptive analysis, the sample size of people living outside the region are not evenly scattered, but are concentrated in some provinces. Thus, we can confirm that the frequency of churn must be compared with the sample size in order to draw conclusions. The choice to show the geographic map related to the frequency of churn, was made in order to be able to report the importance in visualizing the impact of variables on the probability of churn that must be compared with the sample size, and must be balanced. In this case, eliminating provinces with few individuals would have meant bringing the representation of few regions, as the dataset is mainly based on those living in the region.
+
+```{r, map-churn, fig.show='hide', include=TRUE, fig.cap="Churn rate per province"}
+# filtering for churn= 0, so grey provinces are provinces with only churn = 1
+churn_prov <- df_12 %>% group_by(prov, churn) %>% tally() %>% mutate(churn_rate = n/sum(n))  %>% filter(churn == 1)  %>% select(prov, churn_rate)
+map_churn <- left_join(franco_shp, churn_prov)
+map_churn[is.na(map_churn)] <- 0
+ggplot(map_churn) +
+  geom_sf(aes(fill = churn_rate), color = "white", size = 0.1) +
+  scale_fill_gradient(low = "pink1", high = "mediumpurple4", na.value = "gainsboro") + theme_minimal()
+```
+
+## Logistic regression
+
+In the previous section we have identified the relevant variables for our investigation, but we still need to examine how they affect the likelihood of churn. We decided that logistic regression is a useful tool to accomplish this goal.
+Logistic regression is often used for prediction purposes, since it estimates the probability of the binary event, in this case churn or renewed, based on the other indipendent variables.
+
+Our method for choosing the independent variables is based on the multicollinearity problem as well as the findings from the preceding section. Every variable in Table \@ref(tab:summary-table) was included in our initial model, which we then further refined based on the variables that were shown to be statistically not significant. Finally, the optimal model was ascertained by eliminating variables that failed to attain statistical significance, as _new subscription_.
+
+```{r}
+df_12$churn<- as.factor(df_12$churn)
+df_2_dat <- df_12 %>% select(importo, sesso, churn, nabb0512, nvisit13, eta13, cambiocap0512, days_last_entrance, reg)
+str(df_2_dat)
+```
+
+```{r}
+nrow(df_2_dat)
+set.seed(2054)
+index <- sample(1:nrow(df_2_dat), nrow(df_2_dat) * 0.6)
+train_model2 <- df_2_dat[index,]
+test_model2 <- df_2_dat[-index,]
+nrow(train_model2)
+model3 <- glm(churn~., data=train_model2, family="binomial")
+summary(model3)
+str(train_model2)
+car::vif(model3)
+```
+
+```{r, logit-table, include = TRUE}
+tbl_regression(model3, intercept = TRUE) %>% add_significance_stars(hide_p = FALSE) %>% add_vif() %>% 
+modify_caption("Logistic regression") %>% as_kable_extra() %>% kable_styling(latex_options = "hold_position")
+```
+
+Table \@ref(tab:logit-table) shows the estimate of the intercept, which is the log odds, the estimate of the coefficients of the independent variables, which are the log odds ratio, the standard error of the estimates and the p-value. Then, we have also analyzed the multicollinearity problem through the variance inflation factor (VIF), which is a measure of the amount of multicollinearity in a set of multiple regression variables. The VIF estimates how much the variance of a regression coefficient is inflated due to multicollinearity in the model. The general rule of thumb is that if VIF is greater than 5, then multicollinearity is a problem. And we have also displayed the adjusted VIF, which is the VIF adjusted for the number of variables in the model, with a general rule of thumb of 2. In this model we have already selected all the variables with a low VIF, to avoid the multicollinearity problem. Moreover, we have also analyzed the p-value of each variable, and we have selected only those with a p-value lower than 0.05.
+
+The logistic regression's results are more challenging to interpret than those of the linear regression. For the intercept, the log odds are represented by the coefficient estimates; meanwhile, it is used the log odds ratio for the coefficients' estimates of the other indipendent variables. In this instance, the churn serves as the reference level for the binary response variable. The intercept indicate that the log odds of churn is approximately 0.61 with all the variables zero.  This indicates that the odds of churn, or the log odds' exponential, are roughly 1.84 times greater than the odds of non-churning, holding all other variables fixed.
+
+On the other hand, the estimate of the indipendent variables are the log odds ratio of the other variables, which are the log odds of churn compared to the log odds of non-churn. For example, the log odds ratio of "eta13" is -0.02, so we have less log odds with an additional year old, holding all the other variables fixed. The meaning is that young people have an higher probability to churn rather than old individuals. However, this variable has not an high impact on the probability of churn, and so age is not as relevant in predicting churn. The variables _subscription before_ and _number of visits_ have additional negative coefficient estimates. The first one is based on the quantity of subscriptions acquired prior to 2013; having a negative log odds ratio means that the more subscriptions an individual has had before 2013, the less likely he is to churn. The second one has to do with visits in 2013. Thus, the more visits a person had in 2013, the lower his chance of churning. The number of subscriptions has a greater influence on the response variable than the number of visits in 2013. It is reasonable to assume that individuals who have a strong interest in art are more likely to renew their subscriptions than those who only occasionally visit museums.
+
+In the meantime, the estimate of coefficients for the other variables is positive. The gender is the only categorical variable that is taken into account, with an additional class for people who have not responded to the question. Male individuals are more likely to churn rather than female ones, as for _NA_ category. This category has an important magnitude on the probability of churn. Since these people refrained from disclosing their gender identity, it is reasonable to assume that they would prefer not to give these companies access to a large amount of personal information, preferring not to renew their subscription. _change municipality_ is about the change of the municipality of residence, and the more changes an individual has had, the more likely he is to churn. This is the third variable that have an important impact on the probability to churn, since its log odds is 0.27.
+
+On the other hand, _most recent visit_ is a variable we developed to include the duration of each person's most recent visit. The coefficients of this variable and the price paid for the subscription are both zero. Since both estimates are very statistically significant, they have a low impact in the response variable that is positive, which we cannot see because of the limitation given by the table display.
+
+Finally, one of the most important variable for our research is _location_. The reference level for this variable is the number of people that lives outside the region, defined as _region_ class. As seen in the previous section and in the descriptive part, the major of the individuals considered lives in the municipality. Actually, the magnitude of this variable in relation to the likelihood of churn indicates that it is the most significant variable for our next prediction. All classes of this variable have a negative coefficient, implying that the probability of making churn is lower than for those living outside the region. However, city residents are the least likely to churn compared to those outside of the region due to its magnitude in the response variable. People who live in the municipality will inevitably have a greater negative impact on the probability of churn given the difference in the sample sizes of the _region_ and _province_ classes and the greater number of museums in the province.
+
+In summary, after conducting a comprehensive analysis of the data, it is evident that certain variables play a significant role in influencing the probability of churn. People that lives in the municipality, individuals that didn't report their gender, and the change of the residence emerge as key drivers in predicting customer churn. The estimated coefficients for these variables indicate a positive relationship with the likelihood of churn for the _change municipality_ and _gender_, and a negative relationship with the likelihood of churn for the region.
+
+In summary, the factors that have the highest impact on the likelihood of churn are 
+
+All these variables will therefore be used in Chapter 4 to forecast the likelihood of individual churn, and to determine the best model to use in order to maximize profits given the expenses of the upcoming marketing campaigns. 
+\newpage

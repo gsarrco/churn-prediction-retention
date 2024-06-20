@@ -1,0 +1,165 @@
+# Descriptive statistics
+
+This section focuses on the exploration and visualization of the data.
+
+## Population
+
+First, looking at the gender of clients, female represents the 55% of the customers, male only the 42%, while the remaining consists of customers that did not answer.
+
+Figure \@ref(fig:age-classes) shows the count of observations of male and female for each age class.
+
+```{r, age-classes, include=TRUE, fig.cap="Histogram of age classes and gender"}
+# map of the classes of age divided by gender
+ggplot(df_12) + geom_bar(aes(x=age_group, fill = sesso)) +
+  labs(x = "Age Class", y = "Count") +
+  scale_fill_manual(values = c("M" = "lightblue", "F" = "pink"))
+```
+As highlighted before, the proportion of female is slightly greater that the male one for each age class, but it is in general a balanced population. Considering the age, instead, the majority of customers are middle age, between 40 and 70 years old. This was also expected, although it is interesting to see that there is a particularly high percentage of people in the class 60-69, maybe due the fact that they have more free time.
+Other interesting results comes out from this plot. There are some very young customers, between 0 and 9 and a few are older than 90.
+
+## Territorial distribution
+
+To study a service that is by construction linked to the territory, like a museum membership, it is essential to understand where customers live. We divided the analysis, looking specifically at the region where the membership is used, but considering many customers live outside the region we also carried out a macro-analysis on all the Italian provinces.
+
+Most of the customers (68%) live in the region, and in particularly 64% live in the main municipality.
+
+```{r, map-region, fig.show='hide', fig.cap="Map of the region per cap"}
+# map of clients in the region per cap
+colnames(shp)[colnames(shp) == "IT_CAP"] <- "cap"
+shp$cap <- as.factor(shp$cap)
+
+map_grouped <- df_12 %>% count(cap)
+
+map <- left_join(shp, map_grouped)
+
+ggplot(map) +
+  geom_sf(aes(fill = n), color = "white", size = 0.1) +
+  scale_fill_gradient(low = "pink1", high = "mediumpurple4", na.value = 'gainsboro') + theme_minimal()
+```
+
+```{r, map-italy, fig.show='hide', fig.cap="Map of Italy per province"}
+# map of Italy with number of clients per province
+colnames(franco_shp)[colnames(franco_shp) == "SIGLA"] <- "prov"
+franco_shp <- franco_shp[, c('prov', 'geometry')]
+
+df_2 <- df_12[!is.na(df_12$prov),]
+# without the region for a better scale
+dati_1 <- df_2  %>% filter(prov != '1' & prov != '2' & prov != '3' & prov != '4' & prov != '5' & prov != '6' & prov != '7' & prov != '8')
+count_prov <- dati_1%>% count(prov) %>% arrange(desc(n))
+
+map2 <- left_join(franco_shp, count_prov)
+
+ggplot(map2) +
+  geom_sf(aes(fill = n), color = "white", size = 0.1) +
+  scale_fill_gradient(low = "pink1", high = "mediumpurple4", na.value='gainsboro') + theme_minimal()
+```
+ 
+```{r, map-italy1, fig.show='hide', fig.cap="Map of Italy per province without ***"}
+# this is without *** in order to have a good scale
+dati2 <- dati_1 %>% filter(prov != 'NA') # without *** for a better scale 
+count_prov1 <- dati2%>% count(prov) %>% arrange(desc(n))
+
+map3 <- left_join(franco_shp, count_prov1)
+
+ggplot(map3) +
+  geom_sf(aes(fill = n), color = "white", size = 0.1) +
+  scale_fill_gradient(low = "pink1", high = "mediumpurple4", na.value = 'gainsboro') + theme_minimal()
+```
+The last map shows that the remaining clients live in almost all of Italy, with greater observations in regions bordering the association' region. As for the rest, we have an homogeneous distribution in pretty much all the provinces, with some cases with no observations.
+
+## Subscription
+
+```{r}
+# count of the variables and frequencies
+df_12 %>% count(riduzione) %>% arrange(n) %>% mutate(freq = (n/(sum(n)))*100)
+df_12 %>% count(sconto) %>% arrange(n)
+df_12 %>% count(importo) %>% mutate(freq = (n/(sum(n)))*100)
+```
+
+In the dataset are present different type of subscriptions. It doesn't contain specific information about the reductions, although some are self-explanatory. It is clear that some of those are reserved to specific categories, like students and people above 60 years old. The discount type refers to the NGOs that provide the discount, if any. The most common reductions are "Abbonamento Musei" and "Abbonamento Musei Ridotto". Those two alone account for almost 75% of all the subscriptions. It is difficult to understand only from the data the correlation between the type of reduction and the price of the subscription because there are different prices for the same type of reduction. In Figure \@ref(fig:reduction-type) are shown the count for each subscription type.
+
+```{r, reduction-type, include=TRUE, fig.cap="Clients per type of reduction"}
+# plot of the types of reduction
+ggplot(df_12) + 
+  geom_bar(aes(x = riduzione)) +
+  labs(x = "Type of reduction", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+Considering these uncertainties, we focused our analysis on the different category of prices. There are 6 possible prices for the annual membership (0.00€, 10.00€, 49.00€, 30.00€, 28.00€, 44.00€). From Figure \@ref(fig:subscription-price) it is possible to see that the majority of clients purchased subscriptions that costed 28.00€, 30.00€ or 44.00€. The clients that got the membership for free are less than 1%. The most sold was the 44.00€ membership, around 35% of total and the three most common membership's prices account for around 85% of the total.
+
+```{r, subscription-price, include=TRUE, fig.cap="Clients per price of subscription"}
+# plot of the subscription prices
+ggplot(df_12) + 
+  geom_bar(aes(x = as.factor(importo))) +
+  labs(x = "Price of subscription", y = "Count")
+```
+
+```{r}
+# count of prices
+df_12 %>% group_by(riduzione) %>% count(importo)
+```
+
+```{r}
+# count of agencies and frequencies
+df_12 %>% count(agenzia) %>% arrange(n) %>% mutate(freq = (n/(sum(n)))*100)
+df_12 %>% count(agenzia_tipo) %>% mutate(freq = (n/(sum(n)))*100)
+```
+
+These memberships are sold by 141 agencies of 12 types. From Figure \@ref(fig:agency-type) it's clear how the most used type of agency to buy the subscription is the information point, followed by the museum and CRAL (company "free time" association). Those make up more than 80% of all sales (more than 40% just from information points). Some agencies, like buyer groups and commercial points, are around 5%, while many are even less than 1%.
+
+```{r, agency-type, include=TRUE, fig.cap="Clients per type of agency"}
+# plot of clients per type of agency
+ggplot(df_12) +
+  geom_bar(aes(x=agenzia_tipo)) +
+  labs(x = "Type of agency", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+## Museum visits
+
+```{r}
+# museum visits
+df_3 %>% count(museo) %>% arrange(desc(n))
+```
+
+The reference dataset in this case is "df_3", from here we can derive information about the museums and single visits for each client. In total, there are 139 museums.
+
+```{r, visits-museum, fig.show='hide', fig.cap="Visits per museum"}
+# plot of the visits per museum
+df_3 %>% count(museo) %>% arrange(desc(n)) %>% head(10) %>% 
+  ggplot() + geom_col(aes(x=museo, y=n)) +
+  labs(x = "Museum", y = "Count") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+Considering we have information about individual visits, we investigated two main trends, in particular the hour of entrance and the month of the year. Figure \@ref(fig:hour-entrance) shows the distribution of the entrance during the day. As expected, clients tend to enter more in the first part of the morning and of the afternoon. There are some entrances also in the evening, we assumed that those could be related to evening exhibitions.
+
+```{r, hour-entrance, include=TRUE, fig.cap="Hour of entrance"}
+# visits per hour
+df_3 %>% mutate(hour_only = ifelse(hour_only=="00",NA,hour_only)) %>% filter(!is.na(hour_only)) %>%
+  count(hour_only) %>%
+  ggplot() + geom_col(aes(x=hour_only, y=n)) +
+  labs(x = "Hour", y = "Count")
+```
+
+Figure \@ref(fig:entrance-month) indicates the distribution of the visits during the months. Here we do not have all the data for the month of December, so it is not comparable with the other months.
+
+```{r, entrance-month, include=TRUE, fig.cap="Number entrances per month"}
+# entrances per month
+df_3 %>% mutate(month = as.factor(format(df_3$time, "%m"))) %>%
+  count(month) %>%
+    ggplot() + geom_col(aes(x=month, y=n))
+```
+
+Lastly, it is interesting to see the distribution of how many clients did a certain number of visits. Figure \@ref(fig:client-per-visits) is a downward trend even though these are clients with a subscription that presumably allows for many visits.
+
+```{r, client-per-visits, include=TRUE, fig.cap="Number of clients per number of visits"}
+# number of visits
+client_visits <- df_3 %>% group_by(CodCliente) %>% summarise(n_visits = n())
+n_visits <- client_visits %>% group_by(n_visits) %>% summarise(client_per_visit = n())
+n_visits %>% filter(n_visits < 51) %>%
+    ggplot() + geom_col(aes(x = n_visits, y=client_per_visit)) +
+    labs(x = "Number of visits", y = "Count")
+```
+\newpage

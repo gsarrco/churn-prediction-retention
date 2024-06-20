@@ -1,0 +1,292 @@
+```{r, prediction.data.R}
+source("data.R")
+library(kableExtra) # For table styling
+```
+
+
+# Churn prediction and retention strategy
+
+In the last chapter, the choice of the variables that have the highest impact on the churn rate was discussed. In this chapter, we use those variables to predict whether a customer will decide not to renew their museum card in 2014. After determining the prediction model with the highest performance, we will then evaluate the best strategy on how to reach by phone and/or email those who are most likely to churn, given our budget.
+
+## Prediction models
+
+The goal of the prediction model for this task is to predict the churn rate of the museum card holders in 2014 based on the their entrance history, demographic information and amount paid in 2013. Any prediction needs to be trained on a set of data called _training set_, but evaluated on new data the model did not see during training called _test set_. This is done to avoid _overfitting_, or in other words, to avoid the model to learn the training data by heart and not being able to generalize to unseen data.
+
+We split the overall dataset into 60% training set and 40% test set. As table \@ref(tab:test-set-composition) shows, the proportion of churners is around 38%, which does not indicate an overly unbalanced dataset. As a consequence, no special treatment was deemed necessary to deal with the imbalance on the training side.
+
+```{r, test-set-composition, include=TRUE}
+# Select variables to use for prediction
+df_12_mods <- df_12 %>% select(churn, importo, sesso, nabb0512, nvisit13, eta13, cambiocap0512, days_last_entrance, reg)
+# Split into training and test set
+set.seed(2054)
+index <- sample(nrow(df_12_mods), nrow(df_12_mods) * 0.6)
+train <- df_12_mods[index,]
+test <- df_12_mods[-index,]
+# Check composition of test set
+knitr::kable(test %>% group_by(churn) %>% tally(), caption = "Composition of test set in terms of churn") %>%
+  row_spec(0,bold=TRUE) %>% 
+  kable_styling(latex_options = "HOLD_position")
+```
+
+For the choice of the models, we decided to compare the performance of some of the most widely used classification algorithms, namely logistic regression, whose inference analysis is contained in the previous chapter, conditional inference trees, random forest and C5.0 with boosting.
+
+```{r, define-models}
+# Train models and predict on test set
+log <- glm(churn~., data=train, family="binomial")
+log.prob <- predict(log, test, type = "response")
+
+tree <- partykit::ctree(as.factor(churn) ~ ., data=train)
+tree.prob <- predict(tree, test, type="prob")[,2]
+
+set.seed(2054)
+randfor <- randomForest::randomForest(as.factor(churn) ~ ., data=train,
+                                      mtry = 5,
+                                      ntree = 500,
+                                      importance = TRUE)
+randfor.prob <- predict(randfor, test, type = 'prob')[,2]
+
+train_boost <- data.frame(train)
+test_boost <- data.frame(test)
+train_boost$churn <- as.factor(train_boost$churn)
+test_boost$churn <- as.factor(test_boost$churn)
+boost <- C50::C5.0(churn ~ ., data=train_boost, trials=10)
+boost.prob <- predict(boost, test, type = "prob")[,2]
+
+probs <- list(Logistic = log.prob, Tree = tree.prob, C5Boost = boost.prob, RandomForest = randfor.prob)
+
+# Create a function to easily plot the performance of the models
+plot_performance <- function(probs, y, x, only.one.model = "", xlab = "", ylab = "") {
+  if (only.one.model != "") {
+    probs1 <- list()
+    probs1[[only.one.model]] = c(probs1[[only.one.model]], probs[[only.one.model]])
+    probs <- probs1
+  }
+  for (i in seq_along(probs)) {
+    pred <- ROCR::prediction(probs[[i]], test$churn)
+    perf <- ROCR::performance(pred, y, x)
+    if (i == 1) {
+      if (xlab == "" & ylab == "") {
+        plot(perf, col=i)
+      } else {
+        plot(perf, col=i, xlab=xlab, ylab=ylab)
+      }
+    } else {
+      plot(perf, col=i, add=T)
+    }
+  }
+  legend("bottomright", legend = names(probs), col = seq(1, length(probs)), lwd = 2, cex = 0.8)
+}
+```
+
+The performance of the models on the test set can be seen in Figure \@ref(fig:plot-roc). The ROC curve is a plot of the true positive rate, or the proportion of churners correctly classified as such, against the false positive rate, or the proportion of non-churners incorrectly classified as churners. The closer the curve is to the top left corner, the better the model. The area under the curve (AUC) is a measure of the overall performance of the model, with a value of 1 indicating a perfect model and a value of 0.5 indicating a model that is no better than random guessing.
+
+```{r, plot-roc, fig.cap = "ROC curves of models", include=TRUE}
+plot_performance(probs, "tpr", "fpr")
+```
+
+We can see that the logistic model has the best performance for most of the range, together with the conditional inference trees and C5.0 model with boosting. Table \@ref(tab:classification-report) summarises these results numerically in terms of precision, recall, AUC, F1 score and accuracy for each model.
+
+```{r, classification-report, include=TRUE}
+# Create empty table to store performance metrics
+classification.report <- tibble(
+  model = character(),
+  precision = numeric(),
+  recall = numeric(),
+  auc = numeric(),
+  f1 = numeric(),
+  accuracy = numeric()
+)
+
+# For each model, calculate performance metrics and add to table
+for (i in seq_along(probs)) {
+  cutoff <- 0.5
+  pred.class <- ifelse(probs[[i]]>cutoff, 1, 0)
+  input <- table(as.factor(pred.class), as.factor(test$churn))
+  metrics <- caret::confusionMatrix(input)
+  pred <- ROCR::prediction(probs[[i]], test$churn)
+  perf <- ROCR::performance(pred, "auc")
+  classification.report = classification.report %>% add_row(model=names(probs)[i], precision=metrics$byClass[["Precision"]], recall=metrics$byClass[["Recall"]], auc=as.numeric(perf@y.values), f1=metrics$byClass[["F1"]], accuracy=metrics$overall[["Accuracy"]])
+}
+knitr::kable(classification.report, caption = "Performance of the models") %>%
+  row_spec(0,bold=TRUE) %>% 
+  kable_styling(latex_options = "HOLD_position")
+```
+
+Beyond the AUC which was already discussed, accuracy is the simplest measure of performance to look at. It is possible to see that the boosting model has the highest one, followed by the decision tree and the logistic regression. However, accuracy is not always the best measure of performance, especially when the dataset is a bit unbalanced. For this reason, the F1 score is also reported, which is the harmonic mean of precision, or the ratio of correctly predicted churn cases to the total number of positive predictions made by the model, and recall, or ratio of true positive predictions to the total number of actual positive cases. In this case, the conditional inference trees have the highest value.
+
+For the task of this project though, the cost of a false negative is not the same as the cost of a false positive. Failing to identify a churning customer results in a loss of revenue far greater than the cost of contacting a customer who is not going to churn. Consequently, the recall is the most important metric to look at.
+
+The conditional inference tree has the highest recall and this is the model that will be used for defining the retention strategy.
+
+## Retention strategy
+
+The goal of the retention strategy is to define a set of rules to decide which customers to contact and how to contact them. The rules are based on the probability of churn predicted by the model, the cost of contacting a customer and the customer's value to the museum association for the year 2014. Moreover, the association is bounded by a budget of 5,000€ to spend on contacting customers.
+
+The cost of contacting a customer varies by method. The cost of sending an email is 0.15€, while the cost of calling a customer is 1€. The difference in cost is also reflected in the response rate, which is 15% for emails and 35% for phone calls.
+
+For the value of a customer, the initial revenue is given by the amount paid by the customer for the subscription in 2013. This means that we are assuming that the customer will pay the same amount in 2014 and will be eligible for the same discounts. From this initial revenue it is then deducted the amount of money that the association had to pay to the museums (50% of the ordinary ticket price) every time the customer visited a museum in 2013. The resulting value is the net revenue for the association, projected to 2014, calculated for each customer.
+
+### Phone-only and email-only strategies
+
+Initially, a simpler model was considered, where the customers were sorted in descending order by their probability of churn and the association would contact them only either by phone or by email.
+
+The customers most likely to churn are contacted before the ones less likely to churn. If the contacted customer is a churner, then the association gets 35% or 15% the subscription revenue, depending on the response rate of phone calls vs emails, minus 50% of the admission tickets minus the cost of contacting the customer. If the contacted customer is not a churner, then the association will get zero revenue from the campaign, since the customer would have renewed their subscription anyway, but will still have to pay the cost of contacting the customer. The cumulative profit is calculated by summing the profit of each customer contacted in order. It is possible to see the two extreme cases in Figure \@ref(fig:toy-profits-plots).
+
+As we move to the right of each curve, by contacting more and more people, the cumulative profit increases but customers are increasingly not churners. The association starts getting less and less revenue from them; this why both of the curves first flatten out and then start decreasing, as the cost of contacting customers is higher than the revenue generated by the churners. The phone-only strategy, due to its higher cost, has a steeper decrease than the email-only strategy.
+
+The chart also shows the area under the budget constraint of 5,000€ in red. We can see that all the customers could be reached by email, but only 17% of them could be reached by phone. This area allows us to observe how, despite having a higher cumulative profit without a budget constraint, contacting predicted churners only by phone is not the best strategy in this case, since we can see that the maximum of cumulative profit of the email-only strategy is slightly higher than the maximum of the phone-only strategy at the budget constraint.
+
+```{r, toy-profits-plots, fig.cap="Phone-only and email-only cumulative profits with area under budget", include=TRUE}
+test_with_cost <- df_12[-index,]
+test_with_cost$score <- tree.prob
+test_with_cost$phone.revenue <- test_with_cost$churn*0.35*(test_with_cost$importo-test_with_cost$tot_cost*0.5)
+test_with_cost$phone.cost <- 1
+test_with_cost$phone.profit <- test_with_cost$phone.revenue - test_with_cost$phone.cost
+test_with_cost$email.revenue <- test_with_cost$churn*0.15*(test_with_cost$importo-test_with_cost$tot_cost*0.5)
+test_with_cost$email.cost <- 0.15
+test_with_cost$email.profit <- test_with_cost$email.revenue - test_with_cost$email.cost
+test_with_cost <- test_with_cost %>% arrange(desc(score))
+
+test_with_cost$phone.profit.cum <- cumsum(test_with_cost$phone.profit)
+test_with_cost$phone.revenue.cum <- cumsum(test_with_cost$phone.revenue)
+test_with_cost$email.revenue.cum <- cumsum(test_with_cost$email.revenue)
+test_with_cost$phone.cost.cum <- cumsum(test_with_cost$phone.cost)
+test_with_cost$email.profit.cum <- cumsum(test_with_cost$email.profit)
+test_with_cost$email.cost.cum <- cumsum(test_with_cost$email.cost)
+
+test_with_cost$index <- 1:nrow(test_with_cost)
+test_with_cost$percentile <- ntile(test_with_cost$index, 100)
+df_2_perc <- test_with_cost %>% group_by(percentile) %>% summarise(email.profit.cum = last(email.profit.cum), phone.profit.cum = last(phone.profit.cum), phone.cost.cum=last(phone.cost.cum), email.cost.cum=last(email.cost.cum))
+# get percentile associated with the budget
+phone_perc <- df_2_perc %>% filter(phone.cost.cum <= 5000) %>% last()
+email_perc <- df_2_perc %>% filter(email.cost.cum <= 5000) %>% last()
+
+email.profit.cum.plot <- ggplot(df_2_perc, aes(x=percentile, y=email.profit.cum)) + ylim(0, 50000) + annotate("rect", xmin=0, xmax=as.numeric(email_perc["percentile"]),ymin=0,ymax=as.numeric(email_perc["email.profit.cum"]), alpha = .5, fill="pink") + geom_line() + labs(x="% people contacted", y="Email-only cumulative profit")
+phone.profit.cum.plot <- ggplot(df_2_perc, aes(x=percentile, y=phone.profit.cum)) + ylim(0, 50000) + annotate("rect", xmin=0, xmax=as.numeric(phone_perc["percentile"]),ymin=0,ymax=as.numeric(phone_perc["phone.profit.cum"]), alpha = .5, fill="pink") + geom_line() + labs(x="% people contacted", y="Phone-only cumulative profit")
+cowplot::plot_grid(phone.profit.cum.plot, email.profit.cum.plot, ncol=2)
+```
+
+Since the customers are sorted by their probability of churn, it is trivial to find the score cutoff that the association would use if it wanted to exhaust the budget. Tables \@ref(tab:phone-cutoff) and \@ref(tab:email-cutoff) summarise the results, with the cutoffs highlighted in pink and the cumulative values of churners, cost, revenue and profit. With a cutoff of 45%-50%, the association would be able to contact between 4,371 and 5,500 customers by phone, generating a cumulative profit between 20,777€ and 23,522€. Meanwhile the email cutoff associated with the highest profit under the budget stands at 5%-10%, with a profit between 24,923€ and 24,993€. As stated before, this last one would in fact be the best strategy in this simpler case. However, this would not be an efficient strategy, since the budget would not be fully used.
+
+```{r, phone-cutoff, include=TRUE}
+test_with_cost$cum.churners <- cumsum(test_with_cost$churn)
+test_with_cost$scoreBin <- (cut(test_with_cost$score,breaks=c(-1,0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+labels=c("0.05-0.0", "0.1-0.05", "0.15-0.1", "0.2-0.15", "0.25-0.2", "0.3-0.25", "0.35-0.3", "0.4-0.35", "0.45-0.4", "0.5-0.45", "0.6-0.5", "0.7-0.6", "0.8-0.7", "0.9-0.8", "1.0-0.9")))
+# reorder the levels of the factor
+test_with_cost$scoreBin <- factor(test_with_cost$scoreBin, levels = c("1.0-0.9", "0.9-0.8", "0.8-0.7", "0.7-0.6", "0.6-0.5", "0.5-0.45", "0.45-0.4", "0.4-0.35", "0.35-0.3", "0.3-0.25", "0.25-0.2", "0.2-0.15", "0.15-0.1", "0.1-0.05", "0.05-0.0"))
+
+df_2_phone_cutoff <- test_with_cost %>% group_by(scoreBin) %>% summarise(contacted = last(index), churners = last(cum.churners), cum_cost = last(phone.cost.cum), cum_revenue = last(phone.revenue.cum), cum_profit = last(phone.profit.cum))
+knitr::kable(df_2_phone_cutoff, caption = "Phone-only strategy cutoffs", digits=0) %>%
+  row_spec(0,bold=TRUE) %>% row_spec(5, background = "pink") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+```{r, email-cutoff, include=TRUE}
+df_2_email_cutoff <- test_with_cost %>% group_by(scoreBin) %>% summarise(contacted = last(index), churners = last(cum.churners), cum_cost = last(email.cost.cum), cum_revenue = last(email.revenue.cum), cum_profit = last(email.profit.cum))
+knitr::kable(df_2_email_cutoff, caption = "Email-only strategy cutoffs", digits=0) %>%
+  row_spec(0,bold=TRUE) %>% row_spec(13, background = "pink") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+The limitations of these two extreme cases are evident. First of all, as it was just said, the strategy is not efficient in terms of budget. Finally, the customers are sorted by their probability of churn, while weighting the probability of churn by the net value of the customer would be more appropriate and a combination of phone calls and emails possibly more rewarding. This is why a more sophisticated strategy was devised.
+
+## The combined strategy
+
+The more optimal strategy that we designed and advise the association to follow is the following.
+
+First, the customers are now sorted by the product of their probability of churn and their net value. This means that the customers who are most likely to churn and are most valuable to the association are contacted first. The customers who do not bring any value are the last ones to be contacted, if the budget allows it.
+
+Second, the association would use a combination of phone calls and emails to reach the customers more likely to leave its service. From an economic point of view, we think that starting with phone calls for the most valuable customers and then switching to emails for the less valuable ones is the best foundation for this strategy, with still allows the possibility to contact all the customers by email or also a large part of them if it makes financial sense.
+
+Defining a discretionary cutoff for the phone calls and emails, and for the amount of people to contact, was not deemed appropriate. The reason is that this would not be based on data, but on the intuition of the analyst, and could not be applicable to new datasets of the future years. Relying on data-driven decision-making is crucial for creating a sustainable strategy that can be adapted to changing circumstances over time. It ensures that the approach remains objective and relevant as customer behavior and business conditions evolve.
+
+This is why a computation approach was chosen instead, with the development of an algorythm. What the algorythm does is try for each share of contacted customers the best combinations of phone and email percentages that maximize the cumulative profit under the budget constraint. The five top results are shown in Table \@ref(tab:optimal-strategy).
+
+```{r, optimal-strategy, include=TRUE}
+# Create a table with the product of the probability of churn and the net value of the customer
+test_with_cost_opt <- data.frame(test_with_cost)
+test_with_cost_opt$score_customer_value <- test_with_cost_opt$score*(test_with_cost_opt$importo-test_with_cost_opt$tot_cost*0.5)
+# Sort the table by the product of the probability of churn and the net value of the customer
+test_with_cost_opt <- test_with_cost_opt %>% arrange(desc(score_customer_value))
+
+test_with_cost_opt$index <- 1:nrow(test_with_cost_opt)
+
+# Define the budget constraint
+budget_constraint <- 5000
+
+best <- tibble(
+  perc_contacted = numeric(),
+  tot_profit = numeric(),
+  type = factor()
+)
+
+results <- tibble(
+  perc_contacted = numeric(),
+  phone_perc = numeric(),
+  email_perc = numeric(),
+  cum_cost = numeric(),
+  cum_profit = numeric()
+)
+for (max_perc in seq(0, 1, by=0.01)) {
+  distr <- test_with_cost_opt[1:as.numeric(quantile(test_with_cost_opt$index, max_perc)),]
+  
+  # They are used for calculating the total cost and profit for the combinations
+  max_email_cost <- as.numeric(quantile(distr$email.cost.cum, 1))
+  max_email_profit <- as.numeric(quantile(distr$email.profit.cum, 1))
+  
+  # Loop through each combination of phone and email percentages
+  for (phone_percentage in seq(0, 1, by = 0.01)) {
+    email_percentage <- 1 - phone_percentage
+    
+    # Calculate the cumulative cost for the selected percentages
+    phone_cost = as.numeric(quantile(distr$phone.cost.cum, phone_percentage))
+    email_cost = max_email_cost - as.numeric(quantile(distr$email.cost.cum, phone_percentage))
+    
+    # Calculate the cumulative profit for the selected percentages
+    phone_profit <- as.numeric(quantile(distr$phone.profit.cum, phone_percentage))
+    email_profit <- max_email_profit - as.numeric(quantile(distr$email.profit.cum, phone_percentage))
+    
+    total_cost <- phone_cost + email_cost
+    total_profit <- phone_profit + email_profit
+
+    # Check if the budget constraint is satisfied and save the results
+    if (phone_cost + email_cost <= budget_constraint) {
+      results <- results %>% add_row(perc_contacted=max_perc, phone_perc=phone_percentage, email_perc=email_percentage, cum_cost=total_cost, cum_profit=total_profit)
+    }
+    
+    # Save the best combination of percentages in a different table
+    if (phone_percentage == 0.19) {
+      if (total_cost <= budget_constraint) {
+        if (max_perc <= phone_percentage*0.41) {
+          type <- 'phone'
+        } else {
+          type <- 'email'
+        }
+      } else {
+        type <- 'out-of-budget'
+      }
+      best <- best %>% add_row(perc_contacted=max_perc, tot_profit=total_profit, type=type)
+    }
+  }
+}
+
+knitr::kable(results %>% arrange(desc(cum_profit)) %>% head(5), caption = "Top 5 optimal combinations") %>%
+  row_spec(0,bold=TRUE) %>% row_spec(1, background = "pink") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+First of all, we can see that no optimal combinations has either all phone calls or all emails. Instead, it is normally used a combination of the two, with the phone percentage being around 20% and the rest being emails.
+
+The optimal one allows the association to contact 41% of the customers, with 19% of them contacted by phone and 81% by email. The cumulative profit is 31,039€ which around 6,000€ more than the email-only strategy and 7,000€ more than the phone-only strategy.
+
+An important thing to note is that the budget is not perfectly exhausted with a cumulative cost of 4,987€ compared to the budget constraint of 5,000€. However, this difference is not attributable to a particular "choice" of the algorithm but to the fact that the iterations of algorithm are over the percentiles and thus with every move we are adding many more customers. The algorithm stops in that position because if it were to add more it would go over the budget constraint. So it is more of a error in precision than an actual choice in not using the whole budget. Instead, it is clearly seen how the algorithm tries to use as much as the budget as possible.
+
+```{r plot-optimal-strategy, fig.cap="Optimal strategy", include=TRUE}
+best$type <- factor(best$type, levels = c("phone", "email", "out-of-budget"))
+ggplot(best) + geom_path(aes(x=perc_contacted, y=tot_profit, col=type)) + xlab("People contacted") + ylab("Cumulative profit") + scale_x_continuous(labels=scales::percent) + theme(legend.title=element_blank()) + labs(title = "Optimal strategy", subtitle = "41% people contacted: 19% by phone, 81% by email")
+```
+
+Figure \@ref(fig:plot-optimal-strategy) shows the curve of the cumulative profit of the optimal strategy. On it, we can clearly see, depicted with different colors, the phone, email and out-of-budget segments of the curve.
+
+With this important findings, it is possible to state that a combination of the two contact campaigns, phone and email, is better than the extreme cases. Moreover, once more, these findings allow us to see how the association can only contact the customers which are more likely to churn and are more valuable, while discarding the ones which are less likely to churn and are less valuable. This is a very important aspect of the strategy, since it allows the association to save money and time, while still maximizing the profit.
+\newpage

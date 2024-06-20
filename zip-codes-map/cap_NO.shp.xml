@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="it"><Esri><MetaID>{25E6AA28-C1CF-4CCE-98CA-71801430447D}</MetaID><CreaDate>20090804</CreaDate><CreaTime>11214600</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process Name="Dissolve_3" ToolSource="C:\Programmi\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\Dissolve" Date="20090804" Time="112146">Dissolve comuni_NO \\VBOXSVR\xp\cap\cap_NO2.shp IT.CAP # MULTI_PART</Process></lineage></DataProperties></Esri></metadata>

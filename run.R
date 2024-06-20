@@ -1,0 +1,1 @@
+bookdown::render_book("index.Rmd", "bookdown::pdf_book", output_dir = ".", output_file = "report.pdf")

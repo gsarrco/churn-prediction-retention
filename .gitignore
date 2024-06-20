@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+*.pdf
+*.log
+_main.Rmd
+data/
+data.R
