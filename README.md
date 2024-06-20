@@ -15,4 +15,4 @@ Since it involved the use of sensitive customer and business data, we were unfor
 - The references to specific museums or locations are deleted
 - Information about customers, such as age, geographical distribution and so on are deleted
 
-However, the core of the project, consisting of the churn prediction and retention analysis' chapter, is published completely.
+However, the core of the project, consisting of the churn prediction and retention analysis' chapter, is published in its entirety.
