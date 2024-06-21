@@ -4,6 +4,8 @@
 
 <p align='center'>
   This project develops and evaluates predictive models to identify museum card holders likely to churn. It proposes an optimized retention strategy combining phone calls and emails, prioritizing high-value customers and maximizing profit within a €5,000 budget constraint.
+  </br></br>
+  <a href='https://gsarrco.github.io/churn-prediction-retention'><strong>View Report »</strong></a>
 </p>
 </br>
 
