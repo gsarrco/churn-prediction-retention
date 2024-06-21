@@ -9,7 +9,7 @@
 </p>
 </br>
 
-The following work is the result of a university project in customer analytics, during our MSc in Data Analytics for Business & Society at Ca' Foscari University of Venice. The authors are myself, [Gabriele Bidoia](https://github.com/gbrlbd), [Giada Pezzo](https://github.com/giadapezzo) and [Beatrice Fabris](https://github.com/beatricefabris).
+The following work is the result of a university project in customer analytics, during our MSc in Data Analytics for Business & Society at Ca' Foscari University of Venice. The authors are [Gabriele Bidoia](https://github.com/gbrlbd), [Giada Pezzo](https://github.com/giadapezzo), [Beatrice Fabris](https://github.com/beatricefabris), [Giacomo Sarrocco](https://github.com/gsarrco).
 
 Since it involved the use of sensitive customer and business data, we are unfortunately unable to publish the entire dataset and several parts of the report had to be removed. In particular:
 
