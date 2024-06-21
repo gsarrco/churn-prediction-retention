@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>1 Data preparation | Churn prediction and retention analysis for a museum subscription in Italy</title>
+  <meta name="description" content="1 Data preparation | Churn prediction and retention analysis for a museum subscription in Italy" />
+  <meta name="generator" content="bookdown 0.36 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="1 Data preparation | Churn prediction and retention analysis for a museum subscription in Italy" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="1 Data preparation | Churn prediction and retention analysis for a museum subscription in Italy" />
+  
+  
+  
+
+<meta name="author" content="Gabriele Bidoia" />
+<meta name="author" content="Beatrice Fabris" />
+<meta name="author" content="Giada Pezzo" />
+<meta name="author" content="Giacomo Sarrocco" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="introduction.html"/>
+<link rel="next" href="descriptive-statistics.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preliminary remarks</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i>Introduction</a></li>
+<li class="chapter" data-level="1" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>1</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-preparation.html"><a href="data-preparation.html#about-the-data"><i class="fa fa-check"></i><b>1.1</b> About the data</a></li>
+<li class="chapter" data-level="1.2" data-path="data-preparation.html"><a href="data-preparation.html#data-cleaning-and-processing"><i class="fa fa-check"></i><b>1.2</b> Data cleaning and processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html"><i class="fa fa-check"></i><b>2</b> Descriptive statistics</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#population"><i class="fa fa-check"></i><b>2.1</b> Population</a></li>
+<li class="chapter" data-level="2.2" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#territorial-distribution"><i class="fa fa-check"></i><b>2.2</b> Territorial distribution</a></li>
+<li class="chapter" data-level="2.3" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#subscription"><i class="fa fa-check"></i><b>2.3</b> Subscription</a></li>
+<li class="chapter" data-level="2.4" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#museum-visits"><i class="fa fa-check"></i><b>2.4</b> Museum visits</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="variable-selection.html"><a href="variable-selection.html"><i class="fa fa-check"></i><b>3</b> Variable selection</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="variable-selection.html"><a href="variable-selection.html#selecting-variables-based-on-summary-statistics"><i class="fa fa-check"></i><b>3.1</b> Selecting variables based on summary statistics</a></li>
+<li class="chapter" data-level="3.2" data-path="variable-selection.html"><a href="variable-selection.html#logistic-regression"><i class="fa fa-check"></i><b>3.2</b> Logistic regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html"><i class="fa fa-check"></i><b>4</b> Churn prediction and retention strategy</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#prediction-models"><i class="fa fa-check"></i><b>4.1</b> Prediction models</a></li>
+<li class="chapter" data-level="4.2" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#retention-strategy"><i class="fa fa-check"></i><b>4.2</b> Retention strategy</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#phone-only-and-email-only-strategies"><i class="fa fa-check"></i><b>4.2.1</b> Phone-only and email-only strategies</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#the-combined-strategy"><i class="fa fa-check"></i><b>4.3</b> The combined strategy</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i>Conclusion</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Churn prediction and retention analysis for a museum subscription in Italy</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data-preparation" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">1</span> Data preparation<a href="data-preparation.html#data-preparation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="about-the-data" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> About the data<a href="data-preparation.html#about-the-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this preliminary section, the data that will be used to conduct the analysis aimed at predicting the likelihood of churn of museum subscriptions are described.</p>
+<p>Our data consists in three different datasets, each concerning specific aspects of the customers.
+The first dataset provides personal and subscription information about customers. It contains around 100,000 observations and 14 variables covering details of the purchase transactions, payment methods, types of discounts, as well as demographic and geographic information.</p>
+<p>With a total of around 80,000 observations and 16 variables, the second dataset provides a comprehensive view of card renewal dynamics. It includes both variables that provide personal details about customers and variables related to subscription renewals, such as the date when the subscription stared.
+The last dataset focuses on the individual visits to the museums. Featuring around 500,000 observations and 7 variables, it provides a detailed view of customer visits to museums, including information such as dates, times, ticket prices, and locations.</p>
+</div>
+<div id="data-cleaning-and-processing" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Data cleaning and processing<a href="data-preparation.html#data-cleaning-and-processing" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>It is essential to conduct rigorous data cleaning and preparation operations in order to guarantee the integrity and dependability of the datasets for further data analysis and prediction model construction. This critical phase lays the foundation for the accuracy of our insights and predictions.</p>
+<p>The initial step involves the merge of the first two datasets using the customer ID as the common identifier. During this merging process approximately 8,000 observations was lost due to the unavailability of matching customer IDs.</p>
+<p>The focus then shifts to identifying and dealing with missing and NA (Not Available) values within the datasets. There are certain entries in the dataset marked as “DATO MANCANTE,” “XXXXX,” “ESTER,” “BIANC,” and “CORSO,” all of which are taken into account and automatically converted into NA values. Additionally, the age variable had some missing entries, which led to a problem that was resolved by calculating all ages using the customer’s birth-date and the reference year of 2014.
+All date-related data fields are uniformly translated into a common date format to improve data consistency and usability. As most of our customers reside in the association area and its surrounding, we created an additional categorical variable to indicate if the customer lives in the municipality of the association, in the region of the association but outside of the municipality, or outside the region. This was done to provide more specific geographical context.</p>
+<p>Looking at customers’ time visits, it turned out that there are inconsistencies in the values. An entrance time of “00:00,” which is found in over 10,000 observations, is thought to be improbable and is treated as NA. Additionally, occurrences when people entered the museum at or almost at the same time, frequently with the same customer ID, have been considered false.
+The variable “cap,” which was initially numerical, also has a problem because the leading zeros were unintentionally left out. The variable is changed into a factor variable to ensure that all numerical values are included, correcting the situation and maintaining the accuracy and completeness of the data.</p>
+<p>In Table <a href="data-preparation.html#tab:variables">1.1</a>, the variables that are more significant to our analysis are reported and will be later described.</p>
+<div id="cwukcwcyrb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cwukcwcyrb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#cwukcwcyrb thead, #cwukcwcyrb tbody, #cwukcwcyrb tfoot, #cwukcwcyrb tr, #cwukcwcyrb td, #cwukcwcyrb th {
+  border-style: none;
+}
+
+#cwukcwcyrb p {
+  margin: 0;
+  padding: 0;
+}
+
+#cwukcwcyrb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#cwukcwcyrb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#cwukcwcyrb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#cwukcwcyrb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#cwukcwcyrb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#cwukcwcyrb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#cwukcwcyrb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#cwukcwcyrb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#cwukcwcyrb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#cwukcwcyrb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#cwukcwcyrb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#cwukcwcyrb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#cwukcwcyrb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#cwukcwcyrb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#cwukcwcyrb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cwukcwcyrb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#cwukcwcyrb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#cwukcwcyrb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#cwukcwcyrb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cwukcwcyrb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#cwukcwcyrb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cwukcwcyrb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#cwukcwcyrb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cwukcwcyrb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#cwukcwcyrb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cwukcwcyrb .gt_left {
+  text-align: left;
+}
+
+#cwukcwcyrb .gt_center {
+  text-align: center;
+}
+
+#cwukcwcyrb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#cwukcwcyrb .gt_font_normal {
+  font-weight: normal;
+}
+
+#cwukcwcyrb .gt_font_bold {
+  font-weight: bold;
+}
+
+#cwukcwcyrb .gt_font_italic {
+  font-style: italic;
+}
+
+#cwukcwcyrb .gt_super {
+  font-size: 65%;
+}
+
+#cwukcwcyrb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#cwukcwcyrb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#cwukcwcyrb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#cwukcwcyrb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#cwukcwcyrb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#cwukcwcyrb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#cwukcwcyrb .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <caption><span id="tab:variables">Table 1.1: </span>Interesting variables</caption>
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Characteristic&lt;/strong&gt;"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;N = 71,677&lt;/strong&gt;&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>N = 71,677</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">importo</td>
+<td headers="stat_0" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    0</td>
+<td headers="stat_0" class="gt_row gt_center">545 (0.8%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    10</td>
+<td headers="stat_0" class="gt_row gt_center">2,405 (3.4%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    28</td>
+<td headers="stat_0" class="gt_row gt_center">20,180 (28%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    30</td>
+<td headers="stat_0" class="gt_row gt_center">15,951 (22%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    44</td>
+<td headers="stat_0" class="gt_row gt_center">25,536 (36%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    49</td>
+<td headers="stat_0" class="gt_row gt_center">7,060 (9.8%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">sesso</td>
+<td headers="stat_0" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    F</td>
+<td headers="stat_0" class="gt_row gt_center">39,341 (55%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    M</td>
+<td headers="stat_0" class="gt_row gt_center">30,260 (42%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    NA</td>
+<td headers="stat_0" class="gt_row gt_center">2,076 (2.9%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">nabb0512</td>
+<td headers="stat_0" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    0</td>
+<td headers="stat_0" class="gt_row gt_center">19,088 (27%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    1</td>
+<td headers="stat_0" class="gt_row gt_center">12,240 (17%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    2</td>
+<td headers="stat_0" class="gt_row gt_center">9,748 (14%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    3</td>
+<td headers="stat_0" class="gt_row gt_center">5,925 (8.3%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    4</td>
+<td headers="stat_0" class="gt_row gt_center">5,380 (7.5%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    5</td>
+<td headers="stat_0" class="gt_row gt_center">4,976 (6.9%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    6</td>
+<td headers="stat_0" class="gt_row gt_center">4,329 (6.0%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    7</td>
+<td headers="stat_0" class="gt_row gt_center">4,182 (5.8%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    8</td>
+<td headers="stat_0" class="gt_row gt_center">5,809 (8.1%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">cambiocap0512</td>
+<td headers="stat_0" class="gt_row gt_center">6,175 (8.6%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">province</td>
+<td headers="stat_0" class="gt_row gt_center">46,974 (66%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Unknown</td>
+<td headers="stat_0" class="gt_row gt_center">1</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">eta13</td>
+<td headers="stat_0" class="gt_row gt_center">55 (40, 65)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">days_last_entrance</td>
+<td headers="stat_0" class="gt_row gt_center">74 (49, 157)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">nvisit13</td>
+<td headers="stat_0" class="gt_row gt_center">5 (3, 9)</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="2"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> n (%); Median (IQR)</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<div style="page-break-after: always;"></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="descriptive-statistics.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

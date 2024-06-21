@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>4 Churn prediction and retention strategy | Churn prediction and retention analysis for a museum subscription in Italy</title>
+  <meta name="description" content="4 Churn prediction and retention strategy | Churn prediction and retention analysis for a museum subscription in Italy" />
+  <meta name="generator" content="bookdown 0.36 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="4 Churn prediction and retention strategy | Churn prediction and retention analysis for a museum subscription in Italy" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="4 Churn prediction and retention strategy | Churn prediction and retention analysis for a museum subscription in Italy" />
+  
+  
+  
+
+<meta name="author" content="Gabriele Bidoia" />
+<meta name="author" content="Beatrice Fabris" />
+<meta name="author" content="Giada Pezzo" />
+<meta name="author" content="Giacomo Sarrocco" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="variable-selection.html"/>
+<link rel="next" href="conclusion.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preliminary remarks</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i>Introduction</a></li>
+<li class="chapter" data-level="1" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>1</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-preparation.html"><a href="data-preparation.html#about-the-data"><i class="fa fa-check"></i><b>1.1</b> About the data</a></li>
+<li class="chapter" data-level="1.2" data-path="data-preparation.html"><a href="data-preparation.html#data-cleaning-and-processing"><i class="fa fa-check"></i><b>1.2</b> Data cleaning and processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html"><i class="fa fa-check"></i><b>2</b> Descriptive statistics</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#population"><i class="fa fa-check"></i><b>2.1</b> Population</a></li>
+<li class="chapter" data-level="2.2" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#territorial-distribution"><i class="fa fa-check"></i><b>2.2</b> Territorial distribution</a></li>
+<li class="chapter" data-level="2.3" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#subscription"><i class="fa fa-check"></i><b>2.3</b> Subscription</a></li>
+<li class="chapter" data-level="2.4" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#museum-visits"><i class="fa fa-check"></i><b>2.4</b> Museum visits</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="variable-selection.html"><a href="variable-selection.html"><i class="fa fa-check"></i><b>3</b> Variable selection</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="variable-selection.html"><a href="variable-selection.html#selecting-variables-based-on-summary-statistics"><i class="fa fa-check"></i><b>3.1</b> Selecting variables based on summary statistics</a></li>
+<li class="chapter" data-level="3.2" data-path="variable-selection.html"><a href="variable-selection.html#logistic-regression"><i class="fa fa-check"></i><b>3.2</b> Logistic regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html"><i class="fa fa-check"></i><b>4</b> Churn prediction and retention strategy</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#prediction-models"><i class="fa fa-check"></i><b>4.1</b> Prediction models</a></li>
+<li class="chapter" data-level="4.2" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#retention-strategy"><i class="fa fa-check"></i><b>4.2</b> Retention strategy</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#phone-only-and-email-only-strategies"><i class="fa fa-check"></i><b>4.2.1</b> Phone-only and email-only strategies</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#the-combined-strategy"><i class="fa fa-check"></i><b>4.3</b> The combined strategy</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i>Conclusion</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Churn prediction and retention analysis for a museum subscription in Italy</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="churn-prediction-and-retention-strategy" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">4</span> Churn prediction and retention strategy<a href="churn-prediction-and-retention-strategy.html#churn-prediction-and-retention-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>In the last chapter, the choice of the variables that have the highest impact on the churn rate was discussed. In this chapter, we use those variables to predict whether a customer will decide not to renew their museum card in 2014. After determining the prediction model with the highest performance, we will then evaluate the best strategy on how to reach by phone and/or email those who are most likely to churn, given our budget.</p>
+<div id="prediction-models" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Prediction models<a href="churn-prediction-and-retention-strategy.html#prediction-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The goal of the prediction model for this task is to predict the churn rate of the museum card holders in 2014 based on the their entrance history, demographic information and amount paid in 2013. Any prediction needs to be trained on a set of data called <em>training set</em>, but evaluated on new data the model did not see during training called <em>test set</em>. This is done to avoid <em>overfitting</em>, or in other words, to avoid the model to learn the training data by heart and not being able to generalize to unseen data.</p>
+<p>We split the overall dataset into 60% training set and 40% test set. As table <a href="churn-prediction-and-retention-strategy.html#tab:test-set-composition">4.1</a> shows, the proportion of churners is around 38%, which does not indicate an overly unbalanced dataset. As a consequence, no special treatment was deemed necessary to deal with the imbalance on the training side.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:test-set-composition">Table 4.1: </span>Composition of test set in terms of churn
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;font-weight: bold;">
+churn
+</th>
+<th style="text-align:right;font-weight: bold;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+20693
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+7978
+</td>
+</tr>
+</tbody>
+</table>
+<p>For the choice of the models, we decided to compare the performance of some of the most widely used classification algorithms, namely logistic regression, whose inference analysis is contained in the previous chapter, conditional inference trees, random forest and C5.0 with boosting.</p>
+<p>The performance of the models on the test set can be seen in Figure <a href="churn-prediction-and-retention-strategy.html#fig:plot-roc">4.1</a>. The ROC curve is a plot of the true positive rate, or the proportion of churners correctly classified as such, against the false positive rate, or the proportion of non-churners incorrectly classified as churners. The closer the curve is to the top left corner, the better the model. The area under the curve (AUC) is a measure of the overall performance of the model, with a value of 1 indicating a perfect model and a value of 0.5 indicating a model that is no better than random guessing.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:plot-roc"></span>
+<img src="_main_files/figure-html/plot-roc-1.png" alt="ROC curves of models" width="70%" />
+<p class="caption">
+Figure 4.1: ROC curves of models
+</p>
+</div>
+<p>We can see that the logistic model has the best performance for most of the range, together with the conditional inference trees and C5.0 model with boosting. Table <a href="churn-prediction-and-retention-strategy.html#tab:classification-report">4.2</a> summarises these results numerically in terms of precision, recall, AUC, F1 score and accuracy for each model.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:classification-report">Table 4.2: </span>Performance of the models
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+model
+</th>
+<th style="text-align:right;font-weight: bold;">
+precision
+</th>
+<th style="text-align:right;font-weight: bold;">
+recall
+</th>
+<th style="text-align:right;font-weight: bold;">
+auc
+</th>
+<th style="text-align:right;font-weight: bold;">
+f1
+</th>
+<th style="text-align:right;font-weight: bold;">
+accuracy
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Logistic
+</td>
+<td style="text-align:right;">
+0.7832142
+</td>
+<td style="text-align:right;">
+0.9159136
+</td>
+<td style="text-align:right;">
+0.7729627
+</td>
+<td style="text-align:right;">
+0.8443821
+</td>
+<td style="text-align:right;">
+0.7563392
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tree
+</td>
+<td style="text-align:right;">
+0.7836626
+</td>
+<td style="text-align:right;">
+0.9202629
+</td>
+<td style="text-align:right;">
+0.7722978
+</td>
+<td style="text-align:right;">
+0.8464872
+</td>
+<td style="text-align:right;">
+0.7590946
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5Boost
+</td>
+<td style="text-align:right;">
+0.7868784
+</td>
+<td style="text-align:right;">
+0.9146088
+</td>
+<td style="text-align:right;">
+0.7668507
+</td>
+<td style="text-align:right;">
+0.8459493
+</td>
+<td style="text-align:right;">
+0.7595829
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+RandomForest
+</td>
+<td style="text-align:right;">
+0.7919042
+</td>
+<td style="text-align:right;">
+0.8792345
+</td>
+<td style="text-align:right;">
+0.7569467
+</td>
+<td style="text-align:right;">
+0.8332875
+</td>
+<td style="text-align:right;">
+0.7460849
+</td>
+</tr>
+</tbody>
+</table>
+<p>Beyond the AUC which was already discussed, accuracy is the simplest measure of performance to look at. It is possible to see that the boosting model has the highest one, followed by the decision tree and the logistic regression. However, accuracy is not always the best measure of performance, especially when the dataset is a bit unbalanced. For this reason, the F1 score is also reported, which is the harmonic mean of precision, or the ratio of correctly predicted churn cases to the total number of positive predictions made by the model, and recall, or ratio of true positive predictions to the total number of actual positive cases. In this case, the conditional inference trees have the highest value.</p>
+<p>For the task of this project though, the cost of a false negative is not the same as the cost of a false positive. Failing to identify a churning customer results in a loss of revenue far greater than the cost of contacting a customer who is not going to churn. Consequently, the recall is the most important metric to look at.</p>
+<p>The conditional inference tree has the highest recall and this is the model that will be used for defining the retention strategy.</p>
+</div>
+<div id="retention-strategy" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Retention strategy<a href="churn-prediction-and-retention-strategy.html#retention-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The goal of the retention strategy is to define a set of rules to decide which customers to contact and how to contact them. The rules are based on the probability of churn predicted by the model, the cost of contacting a customer and the customer’s value to the museum association for the year 2014. Moreover, the association is bounded by a budget of 5,000€ to spend on contacting customers.</p>
+<p>The cost of contacting a customer varies by method. The cost of sending an email is 0.15€, while the cost of calling a customer is 1€. The difference in cost is also reflected in the response rate, which is 15% for emails and 35% for phone calls.</p>
+<p>For the value of a customer, the initial revenue is given by the amount paid by the customer for the subscription in 2013. This means that we are assuming that the customer will pay the same amount in 2014 and will be eligible for the same discounts. From this initial revenue it is then deducted the amount of money that the association had to pay to the museums (50% of the ordinary ticket price) every time the customer visited a museum in 2013. The resulting value is the net revenue for the association, projected to 2014, calculated for each customer.</p>
+<div id="phone-only-and-email-only-strategies" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Phone-only and email-only strategies<a href="churn-prediction-and-retention-strategy.html#phone-only-and-email-only-strategies" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Initially, a simpler model was considered, where the customers were sorted in descending order by their probability of churn and the association would contact them only either by phone or by email.</p>
+<p>The customers most likely to churn are contacted before the ones less likely to churn. If the contacted customer is a churner, then the association gets 35% or 15% the subscription revenue, depending on the response rate of phone calls vs emails, minus 50% of the admission tickets minus the cost of contacting the customer. If the contacted customer is not a churner, then the association will get zero revenue from the campaign, since the customer would have renewed their subscription anyway, but will still have to pay the cost of contacting the customer. The cumulative profit is calculated by summing the profit of each customer contacted in order. It is possible to see the two extreme cases in Figure <a href="churn-prediction-and-retention-strategy.html#fig:toy-profits-plots">4.2</a>.</p>
+<p>As we move to the right of each curve, by contacting more and more people, the cumulative profit increases but customers are increasingly not churners. The association starts getting less and less revenue from them; this why both of the curves first flatten out and then start decreasing, as the cost of contacting customers is higher than the revenue generated by the churners. The phone-only strategy, due to its higher cost, has a steeper decrease than the email-only strategy.</p>
+<p>The chart also shows the area under the budget constraint of 5,000€ in red. We can see that all the customers could be reached by email, but only 17% of them could be reached by phone. This area allows us to observe how, despite having a higher cumulative profit without a budget constraint, contacting predicted churners only by phone is not the best strategy in this case, since we can see that the maximum of cumulative profit of the email-only strategy is slightly higher than the maximum of the phone-only strategy at the budget constraint.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:toy-profits-plots"></span>
+<img src="_main_files/figure-html/toy-profits-plots-1.png" alt="Phone-only and email-only cumulative profits with area under budget" width="70%" />
+<p class="caption">
+Figure 4.2: Phone-only and email-only cumulative profits with area under budget
+</p>
+</div>
+<p>Since the customers are sorted by their probability of churn, it is trivial to find the score cutoff that the association would use if it wanted to exhaust the budget. Tables <a href="churn-prediction-and-retention-strategy.html#tab:phone-cutoff">4.3</a> and <a href="churn-prediction-and-retention-strategy.html#tab:email-cutoff">4.4</a> summarise the results, with the cutoffs highlighted in pink and the cumulative values of churners, cost, revenue and profit. With a cutoff of 45%-50%, the association would be able to contact between 4,371 and 5,500 customers by phone, generating a cumulative profit between 20,777€ and 23,522€. Meanwhile the email cutoff associated with the highest profit under the budget stands at 5%-10%, with a profit between 24,923€ and 24,993€. As stated before, this last one would in fact be the best strategy in this simpler case. However, this would not be an efficient strategy, since the budget would not be fully used.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:phone-cutoff">Table 4.3: </span>Phone-only strategy cutoffs
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+scoreBin
+</th>
+<th style="text-align:right;font-weight: bold;">
+contacted
+</th>
+<th style="text-align:right;font-weight: bold;">
+churners
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_cost
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_revenue
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_profit
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0.9-0.8
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+294
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+2758
+</td>
+<td style="text-align:right;">
+2398
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.8-0.7
+</td>
+<td style="text-align:right;">
+824
+</td>
+<td style="text-align:right;">
+607
+</td>
+<td style="text-align:right;">
+824
+</td>
+<td style="text-align:right;">
+6303
+</td>
+<td style="text-align:right;">
+5479
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.7-0.6
+</td>
+<td style="text-align:right;">
+2114
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+2114
+</td>
+<td style="text-align:right;">
+13553
+</td>
+<td style="text-align:right;">
+11439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.6-0.5
+</td>
+<td style="text-align:right;">
+4371
+</td>
+<td style="text-align:right;">
+2721
+</td>
+<td style="text-align:right;">
+4371
+</td>
+<td style="text-align:right;">
+25148
+</td>
+<td style="text-align:right;">
+20777
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: pink !important;">
+0.5-0.45
+</td>
+<td style="text-align:right;background-color: pink !important;">
+5500
+</td>
+<td style="text-align:right;background-color: pink !important;">
+3250
+</td>
+<td style="text-align:right;background-color: pink !important;">
+5500
+</td>
+<td style="text-align:right;background-color: pink !important;">
+29022
+</td>
+<td style="text-align:right;background-color: pink !important;">
+23522
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.45-0.4
+</td>
+<td style="text-align:right;">
+6640
+</td>
+<td style="text-align:right;">
+3759
+</td>
+<td style="text-align:right;">
+6640
+</td>
+<td style="text-align:right;">
+33802
+</td>
+<td style="text-align:right;">
+27162
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.4-0.35
+</td>
+<td style="text-align:right;">
+9730
+</td>
+<td style="text-align:right;">
+4903
+</td>
+<td style="text-align:right;">
+9730
+</td>
+<td style="text-align:right;">
+44296
+</td>
+<td style="text-align:right;">
+34566
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.35-0.3
+</td>
+<td style="text-align:right;">
+11511
+</td>
+<td style="text-align:right;">
+5495
+</td>
+<td style="text-align:right;">
+11511
+</td>
+<td style="text-align:right;">
+48878
+</td>
+<td style="text-align:right;">
+37367
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.3-0.25
+</td>
+<td style="text-align:right;">
+13143
+</td>
+<td style="text-align:right;">
+5985
+</td>
+<td style="text-align:right;">
+13143
+</td>
+<td style="text-align:right;">
+53625
+</td>
+<td style="text-align:right;">
+40482
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.25-0.2
+</td>
+<td style="text-align:right;">
+16223
+</td>
+<td style="text-align:right;">
+6694
+</td>
+<td style="text-align:right;">
+16223
+</td>
+<td style="text-align:right;">
+58221
+</td>
+<td style="text-align:right;">
+41998
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.2-0.15
+</td>
+<td style="text-align:right;">
+18333
+</td>
+<td style="text-align:right;">
+7107
+</td>
+<td style="text-align:right;">
+18333
+</td>
+<td style="text-align:right;">
+61713
+</td>
+<td style="text-align:right;">
+43380
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.15-0.1
+</td>
+<td style="text-align:right;">
+22097
+</td>
+<td style="text-align:right;">
+7617
+</td>
+<td style="text-align:right;">
+22097
+</td>
+<td style="text-align:right;">
+65887
+</td>
+<td style="text-align:right;">
+43790
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.1-0.05
+</td>
+<td style="text-align:right;">
+26072
+</td>
+<td style="text-align:right;">
+7907
+</td>
+<td style="text-align:right;">
+26072
+</td>
+<td style="text-align:right;">
+67441
+</td>
+<td style="text-align:right;">
+41369
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.05-0.0
+</td>
+<td style="text-align:right;">
+28671
+</td>
+<td style="text-align:right;">
+7978
+</td>
+<td style="text-align:right;">
+28671
+</td>
+<td style="text-align:right;">
+67577
+</td>
+<td style="text-align:right;">
+38906
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:email-cutoff">Table 4.4: </span>Email-only strategy cutoffs
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+scoreBin
+</th>
+<th style="text-align:right;font-weight: bold;">
+contacted
+</th>
+<th style="text-align:right;font-weight: bold;">
+churners
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_cost
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_revenue
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_profit
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0.9-0.8
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+294
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+1182
+</td>
+<td style="text-align:right;">
+1128
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.8-0.7
+</td>
+<td style="text-align:right;">
+824
+</td>
+<td style="text-align:right;">
+607
+</td>
+<td style="text-align:right;">
+124
+</td>
+<td style="text-align:right;">
+2701
+</td>
+<td style="text-align:right;">
+2578
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.7-0.6
+</td>
+<td style="text-align:right;">
+2114
+</td>
+<td style="text-align:right;">
+1464
+</td>
+<td style="text-align:right;">
+317
+</td>
+<td style="text-align:right;">
+5809
+</td>
+<td style="text-align:right;">
+5492
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.6-0.5
+</td>
+<td style="text-align:right;">
+4371
+</td>
+<td style="text-align:right;">
+2721
+</td>
+<td style="text-align:right;">
+656
+</td>
+<td style="text-align:right;">
+10778
+</td>
+<td style="text-align:right;">
+10122
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.5-0.45
+</td>
+<td style="text-align:right;">
+5500
+</td>
+<td style="text-align:right;">
+3250
+</td>
+<td style="text-align:right;">
+825
+</td>
+<td style="text-align:right;">
+12438
+</td>
+<td style="text-align:right;">
+11613
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.45-0.4
+</td>
+<td style="text-align:right;">
+6640
+</td>
+<td style="text-align:right;">
+3759
+</td>
+<td style="text-align:right;">
+996
+</td>
+<td style="text-align:right;">
+14487
+</td>
+<td style="text-align:right;">
+13491
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.4-0.35
+</td>
+<td style="text-align:right;">
+9730
+</td>
+<td style="text-align:right;">
+4903
+</td>
+<td style="text-align:right;">
+1460
+</td>
+<td style="text-align:right;">
+18984
+</td>
+<td style="text-align:right;">
+17525
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.35-0.3
+</td>
+<td style="text-align:right;">
+11511
+</td>
+<td style="text-align:right;">
+5495
+</td>
+<td style="text-align:right;">
+1727
+</td>
+<td style="text-align:right;">
+20948
+</td>
+<td style="text-align:right;">
+19221
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.3-0.25
+</td>
+<td style="text-align:right;">
+13143
+</td>
+<td style="text-align:right;">
+5985
+</td>
+<td style="text-align:right;">
+1971
+</td>
+<td style="text-align:right;">
+22982
+</td>
+<td style="text-align:right;">
+21011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.25-0.2
+</td>
+<td style="text-align:right;">
+16223
+</td>
+<td style="text-align:right;">
+6694
+</td>
+<td style="text-align:right;">
+2433
+</td>
+<td style="text-align:right;">
+24952
+</td>
+<td style="text-align:right;">
+22518
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.2-0.15
+</td>
+<td style="text-align:right;">
+18333
+</td>
+<td style="text-align:right;">
+7107
+</td>
+<td style="text-align:right;">
+2750
+</td>
+<td style="text-align:right;">
+26448
+</td>
+<td style="text-align:right;">
+23698
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.15-0.1
+</td>
+<td style="text-align:right;">
+22097
+</td>
+<td style="text-align:right;">
+7617
+</td>
+<td style="text-align:right;">
+3315
+</td>
+<td style="text-align:right;">
+28237
+</td>
+<td style="text-align:right;">
+24923
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: pink !important;">
+0.1-0.05
+</td>
+<td style="text-align:right;background-color: pink !important;">
+26072
+</td>
+<td style="text-align:right;background-color: pink !important;">
+7907
+</td>
+<td style="text-align:right;background-color: pink !important;">
+3911
+</td>
+<td style="text-align:right;background-color: pink !important;">
+28903
+</td>
+<td style="text-align:right;background-color: pink !important;">
+24993
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0.05-0.0
+</td>
+<td style="text-align:right;">
+28671
+</td>
+<td style="text-align:right;">
+7978
+</td>
+<td style="text-align:right;">
+4301
+</td>
+<td style="text-align:right;">
+28962
+</td>
+<td style="text-align:right;">
+24661
+</td>
+</tr>
+</tbody>
+</table>
+<p>The limitations of these two extreme cases are evident. First of all, as it was just said, the strategy is not efficient in terms of budget. Finally, the customers are sorted by their probability of churn, while weighting the probability of churn by the net value of the customer would be more appropriate and a combination of phone calls and emails possibly more rewarding. This is why a more sophisticated strategy was devised.</p>
+</div>
+</div>
+<div id="the-combined-strategy" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> The combined strategy<a href="churn-prediction-and-retention-strategy.html#the-combined-strategy" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The more optimal strategy that we designed and advise the association to follow is the following.</p>
+<p>First, the customers are now sorted by the product of their probability of churn and their net value. This means that the customers who are most likely to churn and are most valuable to the association are contacted first. The customers who do not bring any value are the last ones to be contacted, if the budget allows it.</p>
+<p>Second, the association would use a combination of phone calls and emails to reach the customers more likely to leave its service. From an economic point of view, we think that starting with phone calls for the most valuable customers and then switching to emails for the less valuable ones is the best foundation for this strategy, with still allows the possibility to contact all the customers by email or also a large part of them if it makes financial sense.</p>
+<p>Defining a discretionary cutoff for the phone calls and emails, and for the amount of people to contact, was not deemed appropriate. The reason is that this would not be based on data, but on the intuition of the analyst, and could not be applicable to new datasets of the future years. Relying on data-driven decision-making is crucial for creating a sustainable strategy that can be adapted to changing circumstances over time. It ensures that the approach remains objective and relevant as customer behavior and business conditions evolve.</p>
+<p>This is why a computation approach was chosen instead, with the development of an algorythm. What the algorythm does is try for each share of contacted customers the best combinations of phone and email percentages that maximize the cumulative profit under the budget constraint. The five top results are shown in Table <a href="churn-prediction-and-retention-strategy.html#tab:optimal-strategy">4.5</a>.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:optimal-strategy">Table 4.5: </span>Top 5 optimal combinations
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;font-weight: bold;">
+perc_contacted
+</th>
+<th style="text-align:right;font-weight: bold;">
+phone_perc
+</th>
+<th style="text-align:right;font-weight: bold;">
+email_perc
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_cost
+</th>
+<th style="text-align:right;font-weight: bold;">
+cum_profit
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;background-color: pink !important;">
+0.41
+</td>
+<td style="text-align:right;background-color: pink !important;">
+0.19
+</td>
+<td style="text-align:right;background-color: pink !important;">
+0.81
+</td>
+<td style="text-align:right;background-color: pink !important;">
+4987.471
+</td>
+<td style="text-align:right;background-color: pink !important;">
+31039.71
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.34
+</td>
+<td style="text-align:right;">
+0.24
+</td>
+<td style="text-align:right;">
+0.76
+</td>
+<td style="text-align:right;">
+4975.438
+</td>
+<td style="text-align:right;">
+31009.04
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.30
+</td>
+<td style="text-align:right;">
+0.27
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+<td style="text-align:right;">
+4962.230
+</td>
+<td style="text-align:right;">
+30960.86
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.37
+</td>
+<td style="text-align:right;">
+0.22
+</td>
+<td style="text-align:right;">
+0.78
+</td>
+<td style="text-align:right;">
+4956.359
+</td>
+<td style="text-align:right;">
+30952.97
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.38
+</td>
+<td style="text-align:right;">
+0.21
+</td>
+<td style="text-align:right;">
+0.79
+</td>
+<td style="text-align:right;">
+4968.829
+</td>
+<td style="text-align:right;">
+30941.49
+</td>
+</tr>
+</tbody>
+</table>
+<p>First of all, we can see that no optimal combinations has either all phone calls or all emails. Instead, it is normally used a combination of the two, with the phone percentage being around 20% and the rest being emails.</p>
+<p>The optimal one allows the association to contact 41% of the customers, with 19% of them contacted by phone and 81% by email. The cumulative profit is 31,039€ which around 6,000€ more than the email-only strategy and 7,000€ more than the phone-only strategy.</p>
+<p>An important thing to note is that the budget is not perfectly exhausted with a cumulative cost of 4,987€ compared to the budget constraint of 5,000€. However, this difference is not attributable to a particular “choice” of the algorithm but to the fact that the iterations of algorithm are over the percentiles and thus with every move we are adding many more customers. The algorithm stops in that position because if it were to add more it would go over the budget constraint. So it is more of a error in precision than an actual choice in not using the whole budget. Instead, it is clearly seen how the algorithm tries to use as much as the budget as possible.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:plot-optimal-strategy"></span>
+<img src="_main_files/figure-html/plot-optimal-strategy-1.png" alt="Optimal strategy" width="70%" />
+<p class="caption">
+Figure 4.3: Optimal strategy
+</p>
+</div>
+<p>Figure <a href="churn-prediction-and-retention-strategy.html#fig:plot-optimal-strategy">4.3</a> shows the curve of the cumulative profit of the optimal strategy. On it, we can clearly see, depicted with different colors, the phone, email and out-of-budget segments of the curve.</p>
+<p>With this important findings, it is possible to state that a combination of the two contact campaigns, phone and email, is better than the extreme cases. Moreover, once more, these findings allow us to see how the association can only contact the customers which are more likely to churn and are more valuable, while discarding the ones which are less likely to churn and are less valuable. This is a very important aspect of the strategy, since it allows the association to save money and time, while still maximizing the profit.
+</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="variable-selection.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="conclusion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

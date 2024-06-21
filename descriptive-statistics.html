@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>2 Descriptive statistics | Churn prediction and retention analysis for a museum subscription in Italy</title>
+  <meta name="description" content="2 Descriptive statistics | Churn prediction and retention analysis for a museum subscription in Italy" />
+  <meta name="generator" content="bookdown 0.36 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="2 Descriptive statistics | Churn prediction and retention analysis for a museum subscription in Italy" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="2 Descriptive statistics | Churn prediction and retention analysis for a museum subscription in Italy" />
+  
+  
+  
+
+<meta name="author" content="Gabriele Bidoia" />
+<meta name="author" content="Beatrice Fabris" />
+<meta name="author" content="Giada Pezzo" />
+<meta name="author" content="Giacomo Sarrocco" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-preparation.html"/>
+<link rel="next" href="variable-selection.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preliminary remarks</a></li>
+<li class="chapter" data-level="" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i>Introduction</a></li>
+<li class="chapter" data-level="1" data-path="data-preparation.html"><a href="data-preparation.html"><i class="fa fa-check"></i><b>1</b> Data preparation</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="data-preparation.html"><a href="data-preparation.html#about-the-data"><i class="fa fa-check"></i><b>1.1</b> About the data</a></li>
+<li class="chapter" data-level="1.2" data-path="data-preparation.html"><a href="data-preparation.html#data-cleaning-and-processing"><i class="fa fa-check"></i><b>1.2</b> Data cleaning and processing</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html"><i class="fa fa-check"></i><b>2</b> Descriptive statistics</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#population"><i class="fa fa-check"></i><b>2.1</b> Population</a></li>
+<li class="chapter" data-level="2.2" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#territorial-distribution"><i class="fa fa-check"></i><b>2.2</b> Territorial distribution</a></li>
+<li class="chapter" data-level="2.3" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#subscription"><i class="fa fa-check"></i><b>2.3</b> Subscription</a></li>
+<li class="chapter" data-level="2.4" data-path="descriptive-statistics.html"><a href="descriptive-statistics.html#museum-visits"><i class="fa fa-check"></i><b>2.4</b> Museum visits</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="variable-selection.html"><a href="variable-selection.html"><i class="fa fa-check"></i><b>3</b> Variable selection</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="variable-selection.html"><a href="variable-selection.html#selecting-variables-based-on-summary-statistics"><i class="fa fa-check"></i><b>3.1</b> Selecting variables based on summary statistics</a></li>
+<li class="chapter" data-level="3.2" data-path="variable-selection.html"><a href="variable-selection.html#logistic-regression"><i class="fa fa-check"></i><b>3.2</b> Logistic regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html"><i class="fa fa-check"></i><b>4</b> Churn prediction and retention strategy</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#prediction-models"><i class="fa fa-check"></i><b>4.1</b> Prediction models</a></li>
+<li class="chapter" data-level="4.2" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#retention-strategy"><i class="fa fa-check"></i><b>4.2</b> Retention strategy</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#phone-only-and-email-only-strategies"><i class="fa fa-check"></i><b>4.2.1</b> Phone-only and email-only strategies</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="churn-prediction-and-retention-strategy.html"><a href="churn-prediction-and-retention-strategy.html#the-combined-strategy"><i class="fa fa-check"></i><b>4.3</b> The combined strategy</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i>Conclusion</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Churn prediction and retention analysis for a museum subscription in Italy</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="descriptive-statistics" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">2</span> Descriptive statistics<a href="descriptive-statistics.html#descriptive-statistics" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This section focuses on the exploration and visualization of the data.</p>
+<div id="population" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Population<a href="descriptive-statistics.html#population" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>First, looking at the gender of clients, female represents the 55% of the customers, male only the 42%, while the remaining consists of customers that did not answer.</p>
+<p>Figure <a href="descriptive-statistics.html#fig:age-classes">2.1</a> shows the count of observations of male and female for each age class.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:age-classes"></span>
+<img src="_main_files/figure-html/age-classes-1.png" alt="Histogram of age classes and gender" width="70%" />
+<p class="caption">
+Figure 2.1: Histogram of age classes and gender
+</p>
+</div>
+<p>As highlighted before, the proportion of female is slightly greater that the male one for each age class, but it is in general a balanced population. Considering the age, instead, the majority of customers are middle age, between 40 and 70 years old. This was also expected, although it is interesting to see that there is a particularly high percentage of people in the class 60-69, maybe due the fact that they have more free time.
+Other interesting results comes out from this plot. There are some very young customers, between 0 and 9 and a few are older than 90.</p>
+</div>
+<div id="territorial-distribution" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Territorial distribution<a href="descriptive-statistics.html#territorial-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To study a service that is by construction linked to the territory, like a museum membership, it is essential to understand where customers live. We divided the analysis, looking specifically at the region where the membership is used, but considering many customers live outside the region we also carried out a macro-analysis on all the Italian provinces.</p>
+<p>Most of the customers (68%) live in the region, and in particularly 64% live in the main municipality.</p>
+<p>The last map shows that the remaining clients live in almost all of Italy, with greater observations in regions bordering the association’ region. As for the rest, we have an homogeneous distribution in pretty much all the provinces, with some cases with no observations.</p>
+</div>
+<div id="subscription" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Subscription<a href="descriptive-statistics.html#subscription" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the dataset are present different type of subscriptions. It doesn’t contain specific information about the reductions, although some are self-explanatory. It is clear that some of those are reserved to specific categories, like students and people above 60 years old. The discount type refers to the NGOs that provide the discount, if any. The most common reductions are “Abbonamento Musei” and “Abbonamento Musei Ridotto”. Those two alone account for almost 75% of all the subscriptions. It is difficult to understand only from the data the correlation between the type of reduction and the price of the subscription because there are different prices for the same type of reduction. In Figure <a href="descriptive-statistics.html#fig:reduction-type">2.2</a> are shown the count for each subscription type.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:reduction-type"></span>
+<img src="_main_files/figure-html/reduction-type-1.png" alt="Clients per type of reduction" width="70%" />
+<p class="caption">
+Figure 2.2: Clients per type of reduction
+</p>
+</div>
+<p>Considering these uncertainties, we focused our analysis on the different category of prices. There are 6 possible prices for the annual membership (0.00€, 10.00€, 49.00€, 30.00€, 28.00€, 44.00€). From Figure <a href="descriptive-statistics.html#fig:subscription-price">2.3</a> it is possible to see that the majority of clients purchased subscriptions that costed 28.00€, 30.00€ or 44.00€. The clients that got the membership for free are less than 1%. The most sold was the 44.00€ membership, around 35% of total and the three most common membership’s prices account for around 85% of the total.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:subscription-price"></span>
+<img src="_main_files/figure-html/subscription-price-1.png" alt="Clients per price of subscription" width="70%" />
+<p class="caption">
+Figure 2.3: Clients per price of subscription
+</p>
+</div>
+<p>These memberships are sold by 141 agencies of 12 types. From Figure <a href="descriptive-statistics.html#fig:agency-type">2.4</a> it’s clear how the most used type of agency to buy the subscription is the information point, followed by the museum and CRAL (company “free time” association). Those make up more than 80% of all sales (more than 40% just from information points). Some agencies, like buyer groups and commercial points, are around 5%, while many are even less than 1%.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:agency-type"></span>
+<img src="_main_files/figure-html/agency-type-1.png" alt="Clients per type of agency" width="70%" />
+<p class="caption">
+Figure 2.4: Clients per type of agency
+</p>
+</div>
+</div>
+<div id="museum-visits" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Museum visits<a href="descriptive-statistics.html#museum-visits" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The reference dataset in this case is “df_3”, from here we can derive information about the museums and single visits for each client. In total, there are 139 museums.</p>
+<p>Considering we have information about individual visits, we investigated two main trends, in particular the hour of entrance and the month of the year. Figure <a href="descriptive-statistics.html#fig:hour-entrance">2.5</a> shows the distribution of the entrance during the day. As expected, clients tend to enter more in the first part of the morning and of the afternoon. There are some entrances also in the evening, we assumed that those could be related to evening exhibitions.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:hour-entrance"></span>
+<img src="_main_files/figure-html/hour-entrance-1.png" alt="Hour of entrance" width="70%" />
+<p class="caption">
+Figure 2.5: Hour of entrance
+</p>
+</div>
+<p>Figure <a href="descriptive-statistics.html#fig:entrance-month">2.6</a> indicates the distribution of the visits during the months. Here we do not have all the data for the month of December, so it is not comparable with the other months.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:entrance-month"></span>
+<img src="_main_files/figure-html/entrance-month-1.png" alt="Number entrances per month" width="70%" />
+<p class="caption">
+Figure 2.6: Number entrances per month
+</p>
+</div>
+<p>Lastly, it is interesting to see the distribution of how many clients did a certain number of visits. Figure <a href="descriptive-statistics.html#fig:client-per-visits">2.7</a> is a downward trend even though these are clients with a subscription that presumably allows for many visits.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:client-per-visits"></span>
+<img src="_main_files/figure-html/client-per-visits-1.png" alt="Number of clients per number of visits" width="70%" />
+<p class="caption">
+Figure 2.7: Number of clients per number of visits
+</p>
+</div>
+<div style="page-break-after: always;"></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-preparation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="variable-selection.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
