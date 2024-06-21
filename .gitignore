@@ -8,3 +8,6 @@
 _main.Rmd
 data/
 data.R
+.DS_Store
+_book/
+_bookdown_files/
